@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { CITIES, MONTHS, TRAVELERS, type Traveler } from "@/lib/data";
+import { API_PAUSED_NOTE, isGithubPages } from "@/lib/hosting";
 import { buildPlan } from "@/lib/plan";
 
 const crowdColor = { low: "text-teal-200", medium: "text-amber", high: "text-rose-300" } as const;
@@ -112,7 +113,13 @@ export function Planner() {
       </section>
 
       <p className="font-mono text-xs text-muted">
-        Same answer as JSON for your AI agent: <a className="text-amber underline" href={apiPath}>{apiPath}</a>
+        {isGithubPages ? (
+          API_PAUSED_NOTE
+        ) : (
+          <>
+            Same answer as JSON for your AI agent: <a className="text-amber underline" href={apiPath}>{apiPath}</a>
+          </>
+        )}
       </p>
     </div>
   );
