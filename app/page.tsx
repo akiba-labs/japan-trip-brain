@@ -5,21 +5,24 @@ import { Planner } from "@/components/planner";
 import { RATE_LIMIT } from "@/lib/agent-api";
 import { PUBLIC_URL } from "@/lib/api";
 import { CITIES, EVENT_NOTE, MONTHS, TRAVELERS, type City } from "@/lib/data";
+import { API_PAUSED_NOTE, isGithubPages, pagesSiteUrl } from "@/lib/hosting";
 import { SITE_NAME } from "@/lib/site";
 
 const title = "Japan trip planner API for AI agents, plus a free planner by city and month";
 const description =
   "Japan trip planner API for AI agents (free, keyless JSON + MCP) and a free Japan trip planner: pick Tokyo, Kyoto, Osaka, Sapporo, Hiroshima, or Naha, a month, and who's traveling to get where to stay, festivals, crowds, weather, and what to watch out for. AI agents get the same answers from a free, keyless JSON API and MCP tool.";
 
+const siteUrl = isGithubPages ? pagesSiteUrl(PUBLIC_URL) : PUBLIC_URL;
+
 export const metadata: Metadata = {
   title: { absolute: `${title} · ${SITE_NAME}` },
   description,
-  alternates: { canonical: `${PUBLIC_URL}/` },
+  alternates: { canonical: `${siteUrl}/` },
   openGraph: {
     title,
     description,
     type: "website",
-    url: `${PUBLIC_URL}/`,
+    url: `${siteUrl}/`,
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title, description, images: ["/opengraph-image"] },
@@ -29,7 +32,7 @@ const appJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: SITE_NAME,
-  url: `${PUBLIC_URL}/`,
+  url: `${siteUrl}/`,
   applicationCategory: "TravelApplication",
   operatingSystem: "Any (web browser)",
   isAccessibleForFree: true,
@@ -56,7 +59,9 @@ const example = `${PUBLIC_URL}/api/plan?city=kyoto&month=11&traveler=couple`;
 const faq: FaqItem[] = [
   {
     q: "Is there a Japan trip planner API for AI agents?",
-    a: `Yes, free with no key, no signup, and CORS open. GET ${example} returns the season, weather, crowd level, seasonal highlight, festivals that month with typical dates, stay areas ranked for the traveler with a booking search link each, things to do, and warnings, plus a disclaimer field. POST a JSON body with the same fields (city, month, traveler) also works, and ${PUBLIC_URL}/api/cities lists the options. Fair use is about ${RATE_LIMIT} requests per minute per IP. The OpenAPI spec is at ${PUBLIC_URL}/openapi.json, and the same data is on the free remote MCP server at https://free-agent-tools.vercel.app/mcp as the tools japan_trip_plan and japan_trip_options.`,
+    a: isGithubPages
+      ? API_PAUSED_NOTE
+      : `Yes, free with no key, no signup, and CORS open. GET ${example} returns the season, weather, crowd level, seasonal highlight, festivals that month with typical dates, stay areas ranked for the traveler with a booking search link each, things to do, and warnings, plus a disclaimer field. POST a JSON body with the same fields (city, month, traveler) also works, and ${PUBLIC_URL}/api/cities lists the options. Fair use is about ${RATE_LIMIT} requests per minute per IP. The OpenAPI spec is at ${PUBLIC_URL}/openapi.json, and the same data is on the free remote MCP server at https://free-agent-tools.vercel.app/mcp as the tools japan_trip_plan and japan_trip_options.`,
   },
   {
     q: "Where should I stay in Kyoto in November?",
@@ -106,8 +111,14 @@ export default function HomePage() {
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
           Pick a city, a month, and who&apos;s traveling. Get the season, crowds, festivals, the best
-          area to stay, what to do, and what to watch out for. Your AI assistant can ask the same
-          thing through a free API. <Link href="/agents" className="text-amber underline">See how</Link>.
+          area to stay, what to do, and what to watch out for.{" "}
+          {isGithubPages ? (
+            API_PAUSED_NOTE
+          ) : (
+            <>
+              Your AI assistant can ask the same thing through a free API. <Link href="/agents" className="text-amber underline">See how</Link>.
+            </>
+          )}
         </p>
       </section>
       <section className="mt-8">
